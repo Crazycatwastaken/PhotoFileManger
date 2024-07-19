@@ -108,57 +108,50 @@ class Program
 
             try
             {
-                Console.Write("Would you like to import RAW photos Y/N: ");
-                string importRAW = Console.ReadLine().ToUpper();
-                
-                Console.Write("Would you like to import JPEG photos Y/N: ");
-                string importJPG = Console.ReadLine().ToUpper();
+                string importRAW = returnYN("Would you like to import RAW photos Y/N: ");
+                string importJPG = returnYN("Would you like to import JPEG photos Y/N: ");
 
-                // if (importJPG == "N" && importJPG == "N")
-                // {
-                //     return false;
-                // }
+                switch (importRAW)
+                {
+                    case "Y":
+                        Console.WriteLine("Importing RAW Files");
+                        for (int i = 0; i < AWRPhotos.Count; i++)
+                        {
+                            Console.WriteLine($"Importing {AWRPhotos[i]}");
+                            sourceFile = Path.Combine(photoPath, AWRPhotos[i]);
+                            destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\RAW", AWRPhotos[i]);
+                            File.Copy(sourceFile, destFile, true);
+                        }
 
-                if (importRAW == "Y")
-                {
-                    Console.WriteLine("Importing RAW Files");
-                    for (int i = 0; i < AWRPhotos.Count; i++)
-                    {
-                        Console.WriteLine($"Importing {AWRPhotos[i]}");
-                        sourceFile = Path.Combine(photoPath, AWRPhotos[i]);
-                        destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\RAW", AWRPhotos[i]);
-                        File.Copy(sourceFile, destFile, true);
-                    }
-                }
-                else if (importRAW == "N")
-                {
-                    Console.WriteLine("Skipping importing RAW files.");
-                }
-                else
-                {
-                    Console.WriteLine("Please enter Y or N");
-                }
-                
-                if (importJPG == "Y")
-                {
-                    Console.WriteLine("Importing JPEG Files");
-                    for (int i = 0; i < JPGPhotos.Count; i++)
-                    {
-                        Console.WriteLine($"Importing {JPGPhotos[i]}");
-                        sourceFile = Path.Combine(photoPath, JPGPhotos[i]);
-                        destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\JPEG", JPGPhotos[i]);
-                        File.Copy(sourceFile, destFile, true);
-                    }
-                }
-                else if (importJPG == "N")
-                {
-                    Console.WriteLine("Skipping importing RAW files.");
-                }
-                else
-                {
-                    Console.WriteLine("Please enter Y or N");
+                        break;
+                    case "N":
+                        Console.WriteLine("Skipping importing RAW files.");
+                        break;
+                    default:
+                        Console.WriteLine("Please enter Y or N");
+                        break;
                 }
 
+                switch (importJPG)
+                {
+                    case "Y":
+                        Console.WriteLine("Importing JPEG Files");
+                        for (int i = 0; i < JPGPhotos.Count; i++)
+                        {
+                            Console.WriteLine($"Importing {JPGPhotos[i]}");
+                            sourceFile = Path.Combine(photoPath, JPGPhotos[i]);
+                            destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\JPEG", JPGPhotos[i]);
+                            File.Copy(sourceFile, destFile, true);
+                        }
+                        break;
+                    case "N":
+                        Console.WriteLine("Skipping importing JPEG files.");
+                        break;
+                    default:
+                        Console.WriteLine("Please enter Y or N");
+                        break;
+                }
+           
                 return true;
             }
             catch (Exception e)
@@ -197,27 +190,33 @@ class Program
 
         while (finishedImportingPhotos == false)
         {
-            Console.Write("Would you like to import photos Y/N: ");
-            string importphotos = Console.ReadLine();
-            if (importphotos == "Y")
+            string importphotos = returnYN("Would you like to import photos Y/N: ");
+          
+            switch (importphotos)
             {
-                Console.WriteLine("Importing Photos");
-                finishedImportingPhotos = photoPath.MoveRawPhotos(PhotoDirectory);
+                case "Y":
+                    Console.WriteLine("Importing Photos");
+                    finishedImportingPhotos = photoPath.MoveRawPhotos(PhotoDirectory);
+                    break;
+                case "N":
+                    finishedImportingPhotos = true;
+                    break;
+                default:
+                    Console.WriteLine("Invalid input. Please enter Y or N.");
+                    break;
             }
-            else if (importphotos == "N")
-            {
-                finishedImportingPhotos = true;
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter Y or N.");
-            }
+            
         }
 
-        Console.WriteLine("Thank you for using the program");
+       Console.WriteLine("Thank you for using the program");
 
-        
         Console.ReadLine();
+    }
+    
+    static string returnYN(string text)
+    {
+        Console.Write(text);
+        return Console.ReadLine().ToUpper();
     }
 
 
