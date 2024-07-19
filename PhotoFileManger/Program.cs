@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 
 class Program
@@ -24,7 +22,6 @@ class Program
             if (Directory.Exists($"{Path}\\{_currertYear}"))
             {
                 return false;
-
             }
             Directory.CreateDirectory($"{Path}\\{_currertYear}");
             return true;
@@ -161,17 +158,101 @@ class Program
             }
         }
     }
+
+    class DataStore
+    {
+        public string Data { get; set; }
+        
+        public DataStore(string data)
+        {
+            Data = data;
+        }
+        
+        public class PhotoInfo
+        {
+            public DateTimeOffset Date { get; set; }
+            public int Width { get; set; }
+            public int Height { get; set; }
+            public double Size { get; set; }    
+            public string? CameraMaker { get; set; }
+            public string? CameraModel { get; set; }
+            public int? IsoSpeed { get; set; }
+            public string? FStop { get; set; }
+            public string? ExposureTime { get; set; }
+            public string? ExposureBias { get; set; }
+            public string? ExposureProgram { get; set; }
+            public string? MeteringMode { get; set; }
+            public string? FlashMode { get; set; }
+            public int? FocalLength { get; set; } 
+        }
+
+        public void CheckDataStore()
+        {
+            if (Directory.Exists(Data))
+            {
+                Console.WriteLine("Found data store");
+            }
+            else
+            {
+                File.Create(Data).Close();
+                Console.WriteLine($"Created data store @{Data}");
+            }
+
+        }
+
+        public void writeData()
+        {
+           
+            var PhotoInfo = new PhotoInfo
+            {
+                Date = DateTime.Parse("2019-08-01"),
+                Width = 10,
+                Height = 4024,
+                Size = 23.5,
+                CameraMaker = "Sony",
+                CameraModel = "ILCE-6400",
+                IsoSpeed = 800,
+                FStop = "f/16",
+                ExposureTime = "1/160",
+                ExposureBias = "0 step",
+                ExposureProgram = "Manual",
+                MeteringMode = "Pattern",
+                FlashMode = "Flash",
+                FocalLength = 17
+            };
+            
+            string jsonString = JsonSerializer.Serialize(PhotoInfo);
+            Console.WriteLine("Writing");
+            try
+            {
+                
+                using (StreamWriter sw = File.AppendText(Data))
+                {
+                    sw.WriteLine(jsonString);
+                }	
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            Console.WriteLine("Written");
+            Console.WriteLine(jsonString);
+        }
+    }
     
 
     static void Main(string[] args)
     {
         createFolderPath path = new createFolderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
         MovePhotos photoPath = new MovePhotos(@"D:\DCIM\100MSDCF");
+        DataStore dataStore = new DataStore($"{path.Path}\\Datastore.json");
         
-        
-        
-        bool monthExists = path.CheckMonth();
-        bool yearExists = path.CheckYear();
+        path.CheckMonth();
+        path.CheckYear();
+        // dataStore.CheckDataStore();
+        dataStore.writeData();
+        dataStore.writeData();
         bool folderExists = false;
 
         bool photosExist = photoPath.CheckPhotoFolder();
