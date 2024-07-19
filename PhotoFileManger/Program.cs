@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
@@ -82,14 +83,14 @@ class Program
 
         public bool MoveRawPhotos(string destinationDirectory)
         {
-            string sourceFile = Path.Combine(photoPath, "DSC01792.ARW");
-            string destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\RAW", "DSC01792.ARW");
+            string sourceFile = "";
+            string destFile = "";
             
             string RAWPattern = @"\.ARW$";
             string JPGPattern = @"\.JPG";
             List<string> AWRPhotos = new List<string>();
             List<string> JPGPhotos = new List<string>();
-            
+       
             string[] files = Directory.GetFiles(photoPath);
             foreach (string file in files)
             {
@@ -104,22 +105,55 @@ class Program
                     JPGPhotos.Add(fileName);
                 }
             }
-            
-            foreach (string arwFile in AWRPhotos)
-            {
-                Console.WriteLine(arwFile);
-            }
-            foreach (string test in JPGPhotos)
-            {
-                Console.WriteLine(test);
-            }
-                
-            
-            
+
             try
             {
-                // Directory.Move(photoPath, destinationDirectory);
-                File.Copy(sourceFile, destFile, true);
+                Console.Write("Would you like to import RAW photos Y/N: ");
+                string importRAW = Console.ReadLine().ToUpper();
+                
+                Console.Write("Would you like to import JPEG photos Y/N: ");
+                string importJPG = Console.ReadLine().ToUpper();
+
+                if (importRAW == "Y")
+                {
+                    Console.WriteLine("Importing RAW Files");
+                    for (int i = 0; i < AWRPhotos.Count; i++)
+                    {
+                        Console.WriteLine($"Importing {AWRPhotos[i]}");
+                        sourceFile = Path.Combine(photoPath, AWRPhotos[i]);
+                        destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\RAW", AWRPhotos[i]);
+                        File.Copy(sourceFile, destFile, true);
+                    }
+                }
+                else if (importRAW == "N")
+                {
+                    Console.WriteLine("Skipping importing RAW files.");
+                }
+                else
+                {
+                    Console.WriteLine("Please enter Y or N");
+                }
+                
+                if (importJPG == "Y")
+                {
+                    Console.WriteLine("Importing JPEG Files");
+                    for (int i = 0; i < JPGPhotos.Count; i++)
+                    {
+                        Console.WriteLine($"Importing {JPGPhotos[i]}");
+                        sourceFile = Path.Combine(photoPath, JPGPhotos[i]);
+                        destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\JPEG", JPGPhotos[i]);
+                        File.Copy(sourceFile, destFile, true);
+                    }
+                }
+                else if (importJPG == "N")
+                {
+                    Console.WriteLine("Skipping importing RAW files.");
+                }
+                else
+                {
+                    Console.WriteLine("Please enter Y or N");
+                }
+
                 return true;
             }
             catch (Exception e)
@@ -177,37 +211,9 @@ class Program
             }
         }
 
-        // if (!photosExist == true)
-        // {
-        //     Console.WriteLine("Please check the SD of photos");
-        // }
-        // else
-        // {
-        //     Console.WriteLine("Photo Directory loaded.");
-        // }
-
         
         Console.ReadLine();
     }
 
-    // static void CreateFolder(string path, string folderName)
-    // {
-    //     string currentMonth = DateTime.UtcNow.ToString("MMMM");
-    //     string currertYear = DateTime.UtcNow.ToString("YYYY");
-    //
-    //     if (Directory.Exists($"{path}\\{currentMonth}"))
-    //     {
-    //         Console.WriteLine("Month already exists, creating folder inside directory");
-    //         Directory.CreateDirectory($"{path}\\{currentMonth}\\{folderName}");
-    //     }
-    //     else
-    //     {
-    //         Console.WriteLine("Creating current month folder and folder inside directory");
-    //         Directory.CreateDirectory($"{path}\\{currentMonth}");
-    //         Directory.CreateDirectory($"{path}\\{currentMonth}\\{folderName}");
-    //     }
-    //     // Directory.CreateDirectory($"{path}\\{folderName}");
-    //     
-    // }
 
 }
