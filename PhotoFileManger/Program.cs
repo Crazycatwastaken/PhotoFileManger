@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 
 class Program
@@ -78,17 +80,54 @@ class Program
             return false;
         }
 
-        // public bool MoveRawPhotos(string destinationDirectory)
-        // {
-        //     try
-        //     {
-        //         Directory.Move(photoPath, destinationDirectory);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Console.WriteLine(e.Message);
-        //     }
-        // }
+        public bool MoveRawPhotos(string destinationDirectory)
+        {
+            string sourceFile = Path.Combine(photoPath, "DSC01792.ARW");
+            string destFile = Path.Combine($"{destinationDirectory}\\Temp Bin\\RAW", "DSC01792.ARW");
+            
+            string RAWPattern = @"\.ARW$";
+            string JPGPattern = @"\.JPG";
+            List<string> AWRPhotos = new List<string>();
+            List<string> JPGPhotos = new List<string>();
+            
+            string[] files = Directory.GetFiles(photoPath);
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                if (Regex.IsMatch(fileName, RAWPattern))
+                {
+                    AWRPhotos.Add(fileName);
+                }
+
+                if (Regex.IsMatch(fileName, JPGPattern))
+                {
+                    JPGPhotos.Add(fileName);
+                }
+            }
+            
+            foreach (string arwFile in AWRPhotos)
+            {
+                Console.WriteLine(arwFile);
+            }
+            foreach (string test in JPGPhotos)
+            {
+                Console.WriteLine(test);
+            }
+                
+            
+            
+            try
+            {
+                // Directory.Move(photoPath, destinationDirectory);
+                File.Copy(sourceFile, destFile, true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
     }
     
 
@@ -125,7 +164,7 @@ class Program
             if (importphotos == "Y")
             {
                 Console.WriteLine("Importing Photos");
-                // photoPath.MoveRawPhotos(path.Path);
+                Console.WriteLine(photoPath.MoveRawPhotos(PhotoDirectory));
             }
             else if (importphotos == "N")
             {
