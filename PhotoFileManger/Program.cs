@@ -114,6 +114,11 @@ class Program
                 Console.Write("Would you like to import JPEG photos Y/N: ");
                 string importJPG = Console.ReadLine().ToUpper();
 
+                // if (importJPG == "N" && importJPG == "N")
+                // {
+                //     return false;
+                // }
+
                 if (importRAW == "Y")
                 {
                     Console.WriteLine("Importing RAW Files");
@@ -177,11 +182,10 @@ class Program
         bool folderExists = false;
 
         bool photosExist = photoPath.CheckPhotoFolder();
-        bool importingPhotos = false;
+        bool finishedImportingPhotos = false;
 
         string PhotoDirectory = "";
         
-        Console.WriteLine($"{monthExists} and {yearExists}");
 
         while (folderExists == false)
         {
@@ -191,25 +195,26 @@ class Program
             Console.WriteLine(PhotoDirectory);
         }
 
-        while (importingPhotos == false)
+        while (finishedImportingPhotos == false)
         {
             Console.Write("Would you like to import photos Y/N: ");
             string importphotos = Console.ReadLine();
             if (importphotos == "Y")
             {
                 Console.WriteLine("Importing Photos");
-                Console.WriteLine(photoPath.MoveRawPhotos(PhotoDirectory));
+                finishedImportingPhotos = photoPath.MoveRawPhotos(PhotoDirectory);
             }
             else if (importphotos == "N")
             {
-                importingPhotos = true;
-                Console.WriteLine("Exiting program");
+                finishedImportingPhotos = true;
             }
             else
             {
                 Console.WriteLine("Invalid input. Please enter Y or N.");
             }
         }
+
+        Console.WriteLine("Thank you for using the program");
 
         
         Console.ReadLine();
