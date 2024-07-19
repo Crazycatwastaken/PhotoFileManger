@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 
 
@@ -36,12 +37,13 @@ class Program
             return true;
         }
         
-        public bool CheckFolderName(string folderName)
+        public bool CheckFolderName(string folderName, out string workingDirectory)
         {
             string currentDirectory = $"{Path}\\{_currertYear}\\{_currentMonth}\\{folderName}";
             if (Directory.Exists(currentDirectory))
             {
                 Console.WriteLine("Folder name already exists please choose another name");
+                workingDirectory = "";
                 return false;
 
             }
@@ -51,19 +53,60 @@ class Program
             Directory.CreateDirectory($"{currentDirectory}\\Temp Bin");
             Directory.CreateDirectory($"{currentDirectory}\\Temp Bin\\JPEG");
             Directory.CreateDirectory($"{currentDirectory}\\Temp Bin\\RAW");
+            workingDirectory = currentDirectory;
             return true;
         }
         
     }
-    
+
+    class MovePhotos
+    {
+        public string photoPath { get; set; }
+        
+        public MovePhotos(string path)
+        {
+            photoPath = path;
+        }
+
+        public bool CheckPhotoFolder()
+        {
+            if (Directory.Exists($"{photoPath}"))
+            {
+                return true;
+
+            }
+            return false;
+        }
+
+        // public bool MoveRawPhotos(string destinationDirectory)
+        // {
+        //     try
+        //     {
+        //         Directory.Move(photoPath, destinationDirectory);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine(e.Message);
+        //     }
+        // }
+    }
     
 
     static void Main(string[] args)
     {
         createFolderPath path = new createFolderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
+        MovePhotos photoPath = new MovePhotos(@"D:\DCIM\100MSDCF");
+        
+        
+        
         bool monthExists = path.CheckMonth();
         bool yearExists = path.CheckYear();
         bool folderExists = false;
+
+        bool photosExist = photoPath.CheckPhotoFolder();
+        bool importingPhotos = false;
+
+        string PhotoDirectory = "";
         
         Console.WriteLine($"{monthExists} and {yearExists}");
 
@@ -71,8 +114,38 @@ class Program
         {
             Console.Write("What folder name would you like to create: ");
             string folderName = Console.ReadLine();
-            folderExists = path.CheckFolderName(folderName);
+            folderExists = path.CheckFolderName(folderName, out PhotoDirectory);
+            Console.WriteLine(PhotoDirectory);
         }
+
+        while (importingPhotos == false)
+        {
+            Console.Write("Would you like to import photos Y/N: ");
+            string importphotos = Console.ReadLine();
+            if (importphotos == "Y")
+            {
+                Console.WriteLine("Importing Photos");
+                // photoPath.MoveRawPhotos(path.Path);
+            }
+            else if (importphotos == "N")
+            {
+                importingPhotos = true;
+                Console.WriteLine("Exiting program");
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter Y or N.");
+            }
+        }
+
+        // if (!photosExist == true)
+        // {
+        //     Console.WriteLine("Please check the SD of photos");
+        // }
+        // else
+        // {
+        //     Console.WriteLine("Photo Directory loaded.");
+        // }
 
         
         Console.ReadLine();
