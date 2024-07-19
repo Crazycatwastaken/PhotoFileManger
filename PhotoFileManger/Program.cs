@@ -4,37 +4,36 @@ using System.Text;
 
 class Program
 {
-    class folderPath
+    class createFolderPath
     {
         public string Path { get; set; }
         private string _currertYear = DateTime.UtcNow.ToString("yyyy");
         private string _currentMonth = DateTime.UtcNow.ToString("MMMM");
         
-        public folderPath(string path)
+        public createFolderPath(string path)
         {
             Path = path;
         }
-        
         
         public bool CheckYear()
         {
             if (Directory.Exists($"{Path}\\{_currertYear}"))
             {
-                Console.WriteLine("Year already exists, creating folder inside directory");
-                return true;
+                return false;
 
             }
-            return false;
+            Directory.CreateDirectory($"{Path}\\{_currertYear}");
+            return true;
         }
         public bool CheckMonth()
         {
             if (Directory.Exists($"{Path}\\{_currertYear}\\{_currentMonth}"))
             {
-                Console.WriteLine("Month already exists, creating folder inside directory");
-                return true;
+                return false;
 
             }
-            return false;
+            Directory.CreateDirectory($"{Path}\\{_currertYear}\\{_currentMonth}");
+            return true;
         }
         
         public bool CheckFolderName(string folderName)
@@ -55,12 +54,13 @@ class Program
             return true;
         }
         
-        
     }
+    
+    
 
     static void Main(string[] args)
     {
-        folderPath path = new folderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
+        createFolderPath path = new createFolderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
         bool monthExists = path.CheckMonth();
         bool yearExists = path.CheckYear();
         bool folderExists = false;
@@ -73,13 +73,6 @@ class Program
             string folderName = Console.ReadLine();
             folderExists = path.CheckFolderName(folderName);
         }
-        
-
-        
-
-
-
-
 
         
         Console.ReadLine();
