@@ -7,8 +7,8 @@ class Program
     class folderPath
     {
         public string Path { get; set; }
-        private string currertYear = DateTime.UtcNow.ToString("yyyy");
-        private string currentMonth = DateTime.UtcNow.ToString("MMMM");
+        private string _currertYear = DateTime.UtcNow.ToString("yyyy");
+        private string _currentMonth = DateTime.UtcNow.ToString("MMMM");
         
         public folderPath(string path)
         {
@@ -18,7 +18,7 @@ class Program
         
         public bool CheckYear()
         {
-            if (Directory.Exists($"{Path}\\{currertYear}"))
+            if (Directory.Exists($"{Path}\\{_currertYear}"))
             {
                 Console.WriteLine("Year already exists, creating folder inside directory");
                 return true;
@@ -28,7 +28,7 @@ class Program
         }
         public bool CheckMonth()
         {
-            if (Directory.Exists($"{Path}\\{currertYear}\\{currentMonth}"))
+            if (Directory.Exists($"{Path}\\{_currertYear}\\{_currentMonth}"))
             {
                 Console.WriteLine("Month already exists, creating folder inside directory");
                 return true;
@@ -37,8 +37,23 @@ class Program
             return false;
         }
         
+        public bool CheckFolderName(string folderName)
+        {
+            string currentDirectory = $"{Path}\\{_currertYear}\\{_currentMonth}\\{folderName}";
+            if (Directory.Exists(currentDirectory))
+            {
+                Console.WriteLine("Folder name already exists please choose another name");
+                return false;
 
-        
+            }
+            Directory.CreateDirectory(currentDirectory);
+            Directory.CreateDirectory($"{currentDirectory}\\Photos");
+            Directory.CreateDirectory($"{currentDirectory}\\Edited");
+            Directory.CreateDirectory($"{currentDirectory}\\Temp Bin");
+            Directory.CreateDirectory($"{currentDirectory}\\Temp Bin\\JPEG");
+            Directory.CreateDirectory($"{currentDirectory}\\Temp Bin\\RAW");
+            return true;
+        }
         
         
     }
@@ -48,12 +63,18 @@ class Program
         folderPath path = new folderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
         bool monthExists = path.CheckMonth();
         bool yearExists = path.CheckYear();
+        bool folderExists = false;
         
         Console.WriteLine($"{monthExists} and {yearExists}");
 
-        //
-        // Console.Write("What folder name would you like to create");
-        // string folderName = Console.ReadLine();
+        while (folderExists == false)
+        {
+            Console.Write("What folder name would you like to create: ");
+            string folderName = Console.ReadLine();
+            folderExists = path.CheckFolderName(folderName);
+        }
+        
+
         
 
 
