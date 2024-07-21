@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 
 
 
+
 class Program
 {
     class createFolderPath
@@ -98,6 +99,12 @@ class Program
                 if (Regex.IsMatch(fileName, RAWPattern))
                 {
                     AWRPhotos.Add(fileName);
+                    // Console.WriteLine($"{photoPath}\\{fileName}");
+                    // var fileInfo = new FileInfo($"{photoPath}\\{fileName}");
+                    // fileInfo.
+                    
+                    // FileAttributes attributes = File.GetAttributes($"{photoPath}\\{fileName}");
+                    // Console.WriteLine(attributes);
                 }
 
                 if (Regex.IsMatch(fileName, JPGPattern))
@@ -110,6 +117,10 @@ class Program
             {
                 string importRAW = returnYN("Would you like to import RAW photos Y/N: ");
                 string importJPG = returnYN("Would you like to import JPEG photos Y/N: ");
+
+                // Console.WriteLine(DataStore.PhotoInfo.Date);
+                
+                
 
                 switch (importRAW)
                 {
@@ -207,16 +218,15 @@ class Program
 
         public void writeData()
         {
-
             string filePath = Data;
             string readJsonString = File.ReadAllText(filePath);
             List<PhotoInfo> photoInfoList = JsonSerializer.Deserialize<List<PhotoInfo>>(readJsonString);
-            foreach (PhotoInfo photoInfo in photoInfoList)
-            {
-                Console.WriteLine($"Date: {photoInfo.Date}");
-                Console.WriteLine($"Width: {photoInfo.Width}");
-                // ... and so on for other properties
-            }
+            // foreach (PhotoInfo photoInfo in photoInfoList)
+            // {
+            //     Console.WriteLine($"Date: {photoInfo.Date}");
+            //     Console.WriteLine($"Width: {photoInfo.Width}");
+            //     // ... and so on for other properties
+            // }
 
            
             var TestPhotoInfo = new PhotoInfo
@@ -241,18 +251,7 @@ class Program
             //
             photoInfoList.Add(TestPhotoInfo);
             string jsonString = JsonSerializer.Serialize(photoInfoList);
-            // Console.WriteLine(Data);
-            // var readJson = File.ReadAllText(Data);
-            // Console.WriteLine(readJson);
-            //
-            // string jsonString2 = File.ReadAllText(Data);
-            // PhotoInfo photoInfo = JsonSerializer.Deserialize<PhotoInfo>(jsonString2);
-            //
-            // Console.WriteLine($"The file reads: {photoInfo}");
 
-            //
-            // string serializedData = JsonConvert.SerializeObject(myList);
-            // File.WriteAllText(readJson, serializedData);
             
             Console.WriteLine("Writing");
             try
@@ -275,9 +274,8 @@ class Program
     {
         createFolderPath path = new createFolderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
         MovePhotos photoPath = new MovePhotos(@"D:\DCIM\100MSDCF");
-        DataStore dataStore = new DataStore($"{path.Path}\\Datastore.json");
-        dataStore.CheckDataStore();
-        dataStore.writeData();
+        // DataStore dataStore = new DataStore($"{path.Path}\\Datastore.json");
+        // dataStore.CheckDataStore();
         // dataStore.writeData();
         bool folderExists = false;
 
