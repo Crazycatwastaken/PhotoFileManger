@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -15,9 +16,11 @@ class Program
         public createFolderPath(string path)
         {
             Path = path;
+            CheckMonth();
+            CheckYear();
         }
         
-        public bool CheckYear()
+        private bool CheckYear()
         {
             if (Directory.Exists($"{Path}\\{_currertYear}"))
             {
@@ -26,7 +29,7 @@ class Program
             Directory.CreateDirectory($"{Path}\\{_currertYear}");
             return true;
         }
-        public bool CheckMonth()
+        private bool CheckMonth()
         {
             if (Directory.Exists($"{Path}\\{_currertYear}\\{_currentMonth}"))
             {
@@ -186,6 +189,8 @@ class Program
             public int? FocalLength { get; set; } 
         }
 
+        
+
         public void CheckDataStore()
         {
             if (Directory.Exists(Data))
@@ -194,7 +199,7 @@ class Program
             }
             else
             {
-                File.Create(Data).Close();
+                // File.Create(Data).Close();
                 Console.WriteLine($"Created data store @{Data}");
             }
 
@@ -202,16 +207,27 @@ class Program
 
         public void writeData()
         {
-           
-            var PhotoInfo = new PhotoInfo
+
+            string filePath = Data;
+            string readJsonString = File.ReadAllText(filePath);
+            List<PhotoInfo> photoInfoList = JsonSerializer.Deserialize<List<PhotoInfo>>(readJsonString);
+            foreach (PhotoInfo photoInfo in photoInfoList)
             {
-                Date = DateTime.Parse("2019-08-01"),
-                Width = 10,
-                Height = 4024,
+                Console.WriteLine($"Date: {photoInfo.Date}");
+                Console.WriteLine($"Width: {photoInfo.Width}");
+                // ... and so on for other properties
+            }
+
+           
+            var TestPhotoInfo = new PhotoInfo
+            {
+                Date = DateTime.Parse("2020-08-01"),
+                Width = 154,
+                Height = 420,
                 Size = 23.5,
                 CameraMaker = "Sony",
                 CameraModel = "ILCE-6400",
-                IsoSpeed = 800,
+                IsoSpeed = 900,
                 FStop = "f/16",
                 ExposureTime = "1/160",
                 ExposureBias = "0 step",
@@ -221,15 +237,28 @@ class Program
                 FocalLength = 17
             };
             
-            string jsonString = JsonSerializer.Serialize(PhotoInfo);
+            
+            //
+            photoInfoList.Add(TestPhotoInfo);
+            string jsonString = JsonSerializer.Serialize(photoInfoList);
+            // Console.WriteLine(Data);
+            // var readJson = File.ReadAllText(Data);
+            // Console.WriteLine(readJson);
+            //
+            // string jsonString2 = File.ReadAllText(Data);
+            // PhotoInfo photoInfo = JsonSerializer.Deserialize<PhotoInfo>(jsonString2);
+            //
+            // Console.WriteLine($"The file reads: {photoInfo}");
+
+            //
+            // string serializedData = JsonConvert.SerializeObject(myList);
+            // File.WriteAllText(readJson, serializedData);
+            
             Console.WriteLine("Writing");
             try
             {
                 
-                using (StreamWriter sw = File.AppendText(Data))
-                {
-                    sw.WriteLine(jsonString);
-                }	
+                File.WriteAllText(Data, jsonString);
 
             }
             catch (Exception e)
@@ -237,7 +266,7 @@ class Program
                 Console.WriteLine(e);
             }
             Console.WriteLine("Written");
-            Console.WriteLine(jsonString);
+            // Console.WriteLine(jsonString);
         }
     }
     
@@ -247,12 +276,9 @@ class Program
         createFolderPath path = new createFolderPath(@"C:\Users\maxra\Documents\PhotoApplicationTesting");
         MovePhotos photoPath = new MovePhotos(@"D:\DCIM\100MSDCF");
         DataStore dataStore = new DataStore($"{path.Path}\\Datastore.json");
-        
-        path.CheckMonth();
-        path.CheckYear();
-        // dataStore.CheckDataStore();
+        dataStore.CheckDataStore();
         dataStore.writeData();
-        dataStore.writeData();
+        // dataStore.writeData();
         bool folderExists = false;
 
         bool photosExist = photoPath.CheckPhotoFolder();
